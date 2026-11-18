@@ -1,52 +1,77 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
+#include "board.h"
 #include "game.h"
+#include "input.h"
 
 int main(void)
 {
     Game game;
-    char line[INPUT_SIZE];
+    game_init(&game);
 
-    initialize_game(&game);
-    printf("=================================\n");
-    printf("       TWO-PLAYER DOTS & BOXES\n");
-    printf("=================================\n\n");
-    display_instructions();
+    printf("=== Dots and Boxes ===\n");
+    printf("Two players: A and B\n");
+    printf("Complete a box to score and play again.\n");
+    printf("Enter moves as: row1 col1 row2 col2\n");
+    printf("Example: 0 0 0 1\n");
+    printf("Dot rows: 0-%d | Dot columns: 0-%d\n",
+           BOX_ROWS, BOX_COLS);
+    printf("Press Ctrl+D at an empty prompt to exit.\n");
+
+    board_display(&game.board);
+    game_print_scores(&game);
 
     while (!game_is_over(&game)) {
-        char orientation;
-        int row, col;
-        int completed;
-        int parsed;
+        Move move;
 
-        display_board(&game);
-        printf("Player %c, enter your move (for example H 2 3): ",
+        printf("\nPlayer %c, enter your move: ",
                game.current_player);
-        if (fgets(line, sizeof(line), stdin) == NULL) {
-            printf("\nInput ended. Exiting game.\n");
+        fflush(stdout);
+
+        InputResult result = input_read_move(&move);
+
+        if (result == INPUT_END) {
+            if (ferror(stdin)) {
+                fprintf(stderr, "\nError reading input.\n");
+                return EXIT_FAILURE;
+            }
+
+            printf("\nInput ended. Game stopped.\n");
             return EXIT_SUCCESS;
         }
 
-        parsed = sscanf(line, " %c %d %d", &orientation, &row, &col);
-        if (parsed != 3) {
-            printf("Invalid input. Enter a letter (H/V), row, and column.\n");
+        if (result == INPUT_INVALID) {
+            printf("Invalid input. Enter exactly four integers.\n");
             continue;
         }
 
-        completed = make_move(&game, orientation, row, col);
-        if (completed < 0) {
-            printf("Invalid move: check the coordinates and make sure the line is unused.\n");
+        const char *error = game_validate_move(&game, &move);
+
+        if (error != NULL) {
+            printf("Invalid move: %s\n", error);
             continue;
         }
 
-        if (completed > 0) {
-            printf("Player %c completed %d box(es) and gets another turn!\n",
-                   game.current_player, completed);
-        } else {
-            game.current_player = (game.current_player == 'A') ? 'B' : 'A';
+        char player = game.current_player;
+        int claimed = game_apply_move(&game, &move);
+
+        board_display(&game.board);
+        game_print_scores(&game);
+
+        if (claimed > 0) {
+            printf("Player %c claimed %d box%s!\n",
+                   player, claimed,
+                   claimed == 1 ? "" : "es");
+
+            if (!game_is_over(&game)) {
+                printf("Player %c plays again.\n", player);
+            }
         }
     }
+
+    game_print_result(&game);
+    return EXIT_SUCCESS;
+}
 
     display_board(&game);
     display_result(&game);
