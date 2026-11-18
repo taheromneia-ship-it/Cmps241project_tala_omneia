@@ -1,9 +1,14 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#define INPUT_SIZE 128
+#include "game.h"
 
+typedef enum {
+    INPUT_END,
+    INPUT_OK,
+    INPUT_INVALID
+} InputResult;
 
-int read_move(char *orientation, int *row, int *col);
+InputResult input_read_move(Move *move);
 
 #endif
