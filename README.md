@@ -28,11 +28,11 @@ Examples: `H 2 3` or `V 1 4`. Coordinates are 1-based. A move that is out of ran
 A player who completes one or more boxes receives those boxes and takes another turn. Otherwise, the turn passes to the other player.
 
  Debugging with GDB
-```sh
+
 make debug
-```
+
 Useful GDB commands:
-```gdb
+gdb
 break make_move
 run
 print game->current_player
