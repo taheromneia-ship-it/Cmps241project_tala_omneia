@@ -44,9 +44,6 @@ Sprint 1 focuses exclusively on implementing the two-player console version of D
 
 The current implementation includes board initialization and display, move input and validation, box-completion detection, score management, turn handling, and winner declaration.
 
-Bot functionality is reserved for Sprint 2. Network programming and multithreading are also outside the scope of this sprint.
-VM Auto-Start Configuration
-The project brief requires the game to launch automatically when the Linux virtual machine boots, without requiring an interactive login.
 
 This functionality cannot be guaranteed through the C program or Makefile alone because it requires operating-system and virtual-machine configuration.
 
