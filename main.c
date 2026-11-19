@@ -72,8 +72,3 @@ int main(void)
     game_print_result(&game);
     return EXIT_SUCCESS;
 }
-
-    display_board(&game);
-    display_result(&game);
-    return EXIT_SUCCESS;
-}
