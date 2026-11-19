@@ -1,53 +1,55 @@
-# Dots and Boxes — Sprint 1
+Dots and Boxes is a console-based, two-player game implemented in C. The game board consists of 4 rows and 5 columns, containing a total of 20 boxes.
+Project Files
+The project is organized into the following files:
+- main.c: Initializes the game and controls the main game loop.
+- board.c: Initializes and displays the game board.
+- game.c: Validates moves, detects completed boxes, updates player scores, and declares the winner.
+- game.h: Contains shared constants, structures, and game function declarations.
+- input.c: Reads and parses a player's move from standard input.
+- input.h: Contains the input function declaration and input-buffer size.
+- Makefile: Provides commands to build and run the program, as well as debugging and memory-checking targets.
+Building and Running the Game
+To compile the project, open the terminal in the project directory and execute make. Once the compilation is complete, run the game using ./dots_and_boxes.
 
-Console-based two-player Dots and Boxes in C. The board contains 4 rows by 5 columns of boxes (20 total).
+Alternatively, execute make run to compile and launch the game in one step.
+Entering Moves
+Players enter their moves using three values: orientation, row, and column.
 
- Files
-`main.c`: initializes the game and controls the game loop
-`board.c`: initializes and displays the board
- `game.c`: validates moves, detects completed boxes, updates scores, and declares the winner
-`game.h`: shared constants, structures, and game function declarations
-`input.c`: reads and parses a player's move from standard input
-input.h`: input function declaration and input-buffer size
-`Makefile`: builds, runs, and provides GDB/Valgrind targets
+For horizontal edges, players enter H row column. The valid row numbers range from 1 to 5, while the valid column numbers range from 1 to 5.
 
-Build and run
-```sh
-make
-./dots_and_boxes
-```
-Or run `make run`.
+For vertical edges, players enter V row column. The valid row numbers range from 1 to 4, while the valid column numbers range from 1 to 6.
 
- Entering moves
-Enter three values: orientation, row, column.
-H row column: horizontal edge. Rows are 1–5 and columns are 1–5.
-V row column: vertical edge. Rows are 1–4 and columns are 1–6.
+Examples of valid moves include H 2 3 and V 1 4. All coordinates are 1-based.
 
-Examples: `H 2 3` or `V 1 4`. Coordinates are 1-based. A move that is out of range or repeats an existing edge is rejected without changing the turn. Malformed input is also rejected.
+If a player enters coordinates outside the permitted range, selects an edge that has already been drawn, or provides malformed input, the move is rejected. In such cases, the game state remains unchanged, and the player keeps their turn.
 
-A player who completes one or more boxes receives those boxes and takes another turn. Otherwise, the turn passes to the other player.
+When a player completes one or more boxes, they receive the corresponding points and get another turn. Otherwise, the turn passes to the other player.
+Debugging with GDB
+The project includes a GDB debugging target. To start the debugger, execute make debug in the terminal.
 
- Debugging with GDB
+The following GDB commands can be used to inspect and debug the game:
+- break make_move sets a breakpoint at the make_move function.
+- run starts the program.
+- print game->current_player displays the current player.
+- next executes the next line of code.
+- continue resumes program execution until the next breakpoint.
+Memory Checking with Valgrind
+The project also provides a Valgrind target for checking memory-related issues.
 
-make debug
+Execute make valgrind to launch the program under Valgrind. Enter moves until the game ends, or use Ctrl-D to terminate input.
 
-Useful GDB commands:
-gdb
-break make_move
-run
-print game->current_player
-next
-continue
-```
+The implementation uses fixed-size data structures and does not allocate dynamic memory.
+Sprint 1 Scope
+Sprint 1 focuses exclusively on implementing the two-player console version of Dots and Boxes.
 
- Memory checking with Valgrind
-```sh
-make valgrind
-```
-Enter moves until the game ends (or use Ctrl-D to end input). The program uses fixed-size data structures and does not allocate dynamic memory.
+The current implementation includes board initialization and display, move input and validation, box-completion detection, score management, turn handling, and winner declaration.
 
- Sprint 1 scope
-This version implements the two-player console game only. Bot functionality belongs to Sprint 2. Network programming and multithreading are not included.
+Bot functionality is reserved for Sprint 2. Network programming and multithreading are also outside the scope of this sprint.
+VM Auto-Start Configuration
+The project brief requires the game to launch automatically when the Linux virtual machine boots, without requiring an interactive login.
 
- VM auto-start note
-The project brief asks for the game to launch automatically after the Linux VM boots, without an interactive login. This is an OS/VM configuration task, not something the C program or Makefile can guarantee. Configure an autologin/getty and a startup command in the chosen Linux distribution after the game has been copied and tested there. Consider the security implications before enabling automatic login on a shared or exposed machine.
+This functionality cannot be guaranteed through the C program or Makefile alone because it requires operating-system and virtual-machine configuration.
+
+To achieve this, configure automatic login (autologin/getty) and a startup command in the selected Linux distribution after copying and testing the game inside the virtual machine.
+
+Security implications should also be considered before enabling automatic login, particularly when using a shared or externally accessible machine.
