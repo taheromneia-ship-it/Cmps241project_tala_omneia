@@ -1,50 +1,51 @@
 #include <stdio.h>
-#include "game.h"
+#include "board.h"
 
-void initialize_game(Game *game)
+void board_init(Board *board)
 {
-    int r, c;
-    for (r = 0; r <= ROWS; r++)
-        for (c = 0; c < COLS; c++)
-            game->board.horizontal[r][c] = 0;
+    *board = (Board){0};
 
-    for (r = 0; r < ROWS; r++)
-        for (c = 0; c <= COLS; c++)
-            game->board.vertical[r][c] = 0;
-
-    for (r = 0; r < ROWS; r++)
-        for (c = 0; c < COLS; c++)
-            game->board.boxes[r][c] = ' ';
-
-    game->current_player = 'A';
-    game->score_a = 0;
-    game->score_b = 0;
-    game->claimed_boxes = 0;
+    for (int r = 0; r < BOX_ROWS; r++) {
+        for (int c = 0; c < BOX_COLS; c++) {
+            board->owner[r][c] = ' ';
+        }
+    }
 }
 
-void display_board(const Game *game)
+void board_display(const Board *board)
 {
-    int r, c;
-    printf("\n       Dots and Boxes (4 x 5)\n\n");
+    printf("\n    ");
 
-    for (r = 0; r <= ROWS; r++) {
-        /* Horizontal edges and dots. */
-        for (c = 0; c < COLS; c++) {
-            printf("  o");
-            printf(game->board.horizontal[r][c] ? "-----" : "     ");
+    for (int c = 0; c <= BOX_COLS; c++) {
+        printf("%-4d", c);
+    }
+
+    printf("\n");
+
+    for (int r = 0; r <= BOX_ROWS; r++) {
+        printf("%2d  ", r);
+
+        for (int c = 0; c < BOX_COLS; c++) {
+            printf(".");
+            printf("%s",
+                   board->horizontal[r][c] ? "---" : "   ");
         }
-        printf("  o\n");
 
-        if (r < ROWS) {
-            for (c = 0; c <= COLS; c++) {
-                printf(game->board.vertical[r][c] ? "  |  " : "     ");
-                if (c < COLS)
-                    printf(" %c   ", game->board.boxes[r][c]);
+        printf(".\n");
+
+        if (r < BOX_ROWS) {
+            printf("    ");
+
+            for (int c = 0; c < BOX_COLS; c++) {
+                printf("%c %c ",
+                       board->vertical[r][c] ? '|' : ' ',
+                       board->owner[r][c]);
             }
-            printf("\n");
+
+            printf("%c\n",
+                   board->vertical[r][BOX_COLS] ? '|' : ' ');
         }
     }
 
-    printf("\nScore: Player A = %d | Player B = %d\n",
-           game->score_a, game->score_b);
+    printf("\n");
 }
